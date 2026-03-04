@@ -42,7 +42,7 @@ def main():
     
     # Start the server
     uvicorn.run(
-        "main_fastapi:app",
+        "main:app",
         host=host,
         port=port,
         reload=True,

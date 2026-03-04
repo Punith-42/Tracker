@@ -394,11 +394,11 @@ dark_mode = st.session_state.get('dark_mode', False)
 st.markdown(get_css(dark_mode), unsafe_allow_html=True)
 
 # Configuration
-API_BASE_URL = "http://127.0.0.1:5001"  # Updated to port 5001
+API_BASE_URL = "http://127.0.0.1:8000"
 USER_ID = 1  # Default user ID
 
 class AgentClient:
-    """Client for interacting with the Flask backend."""
+    """Client for interacting with the FastAPI backend."""
     
     def __init__(self, base_url: str):
         self.base_url = base_url
@@ -418,7 +418,7 @@ class AgentClient:
             return {
                 "success": False,
                 "error": f"API Error: {str(e)}",
-                "response": "I'm having trouble connecting to the agent system. Please check if the Flask server is running."
+                "response": "I'm having trouble connecting to the agent system. Please check if the FastAPI server is running."
             }
     
     def get_health_status(self) -> Dict[str, Any]:
@@ -535,7 +535,7 @@ def main():
             st.info(f"🧠 Model: {health_status.get('model', 'Unknown')}")
         else:
             st.markdown('<p class="status-offline">❌ System Offline</p>', unsafe_allow_html=True)
-            st.error("Please ensure the Flask server is running on port 5001")
+            st.error("Please ensure the FastAPI server is running on port 8000")
         
         st.markdown("</div>", unsafe_allow_html=True)
         
@@ -673,7 +673,7 @@ def main():
     st.markdown("""
     <div style='text-align: center; color: #666; font-size: 0.9rem;'>
         🤖 Powered by LLM Agent System | 
-        🚀 Flask Backend | 
+        🚀 FastAPI Backend | 
         📊 Streamlit Frontend |
         🔍 LangSmith Tracing
     </div>
