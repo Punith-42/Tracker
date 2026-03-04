@@ -12,11 +12,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
 from langchain_core.prompts import PromptTemplate
 from langsmith import traceable
-import json
 
 from agents.core.prompt_manager import PromptManager
 from agents.guards.security_guards import ResponseSecurityGuard
-from agents.schemas import DataAnalysisResponse, TimeAnalysisResult, AggregationResult
+from agents.schemas import DataAnalysisResponse
 
 logger = logging.getLogger(__name__)
 

@@ -11,10 +11,10 @@ import time
 import requests
 from pathlib import Path
 
-def check_fastapi_server():
-    """Check if FastAPI server is running."""
+def check_backend_server():
+    """Check if FastAPI backend server is running."""
     try:
-        response = requests.get("http://127.0.0.1:5000/api/health", timeout=5)
+        response = requests.get("http://127.0.0.1:8000/api/health", timeout=5)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
@@ -26,29 +26,27 @@ def start_streamlit():
     print("=" * 60)
     
     # Check if FastAPI server is running
-    print("🔍 Checking FastAPI server status...")
-    if not check_fastapi_server():
-        print("❌ FastAPI server is not running!")
-        print("📝 Please start the FastAPI server first:")
-        print("   python main_fastapi.py")
-        print("   or")
-        print("   uvicorn main_fastapi:app --host 127.0.0.1 --port 5000 --reload")
+    print("🔍 Checking FastAPI backend status...")
+    if not check_backend_server():
+        print("❌ FastAPI backend is not running!")
+        print("📝 Please start the backend first:")
+        print("   python main.py")
         print()
-        print("⏳ Waiting for FastAPI server to start...")
+        print("⏳ Waiting for the backend to start...")
         
         # Wait for server to start
         max_attempts = 30
         for attempt in range(max_attempts):
-            if check_fastapi_server():
-                print("✅ FastAPI server is now running!")
+            if check_backend_server():
+                print("✅ Backend is now running!")
                 break
             print(f"⏳ Attempt {attempt + 1}/{max_attempts} - Waiting...")
             time.sleep(2)
         else:
-            print("❌ FastAPI server did not start. Please start it manually.")
+            print("❌ Backend did not start. Please start it manually.")
             return False
     else:
-        print("✅ FastAPI server is running!")
+        print("✅ Backend is running!")
     
     print()
     print("📊 Streamlit Configuration:")
@@ -57,9 +55,8 @@ def start_streamlit():
     print("   URL: http://localhost:8501")
     print()
     print("🔗 Available Services:")
-    print("   FastAPI Backend: http://127.0.0.1:5000")
+    print("   FastAPI Backend: http://127.0.0.1:8000")
     print("   Streamlit Frontend: http://localhost:8501")
-    print("   FastAPI Docs: http://127.0.0.1:5000/docs")
     print("=" * 60)
     
     # Start Streamlit

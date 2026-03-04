@@ -176,6 +176,6 @@ if __name__ == "__main__":
     print("\n4. Final connection test...")
     if test_connection():
         print("\nDatabase setup completed successfully!")
-        print("You can now run the Flask application.")
+        print("You can now run the FastAPI application.")
     else:
         print("\nSetup completed but connection test failed.")

@@ -20,13 +20,9 @@ class Config:
     DATABASE_PASSWORD = os.getenv('DB_PASSWORD', '')
     DATABASE_PORT = os.getenv('DB_PORT', '3306')
     
-    # Flask configuration
-    SECRET_KEY = os.getenv('SECRET_KEY', 'local-development-key')
-    DEBUG = True
-    
-    # API configuration
-    API_HOST = '127.0.0.1'
-    API_PORT = 5001
+    # API configuration (FastAPI default)
+    API_HOST = os.getenv('API_HOST', '127.0.0.1')
+    API_PORT = int(os.getenv('API_PORT', '8000'))
     
     @classmethod
     def get_database_config(cls) -> Dict[str, Any]:
