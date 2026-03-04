@@ -422,13 +422,11 @@ agents/
 └── schemas.py                     # Pydantic schemas
 
 backend/
-├── api/
-│   └── agent_endpoints.py         # API endpoints
 └── database/
     └── db_manager.py              # Database operations
 
 streamlit_app.py                    # Frontend UI
-main.py                             # Flask backend
+main.py                             # FastAPI backend
 ```
 
 ---
@@ -440,7 +438,7 @@ main.py                             # Flask backend
 - **LangChain**: LLM integration framework
 - **Pydantic**: Schema validation
 - **Streamlit**: Frontend interface
-- **Flask/FastAPI**: Backend API
+- **FastAPI**: Backend API
 
 ---
 
