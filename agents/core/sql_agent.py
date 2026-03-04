@@ -4,8 +4,6 @@ Focused specifically on understanding natural language questions and generating 
 Enhanced with database schema awareness.
 """
 
-import os
-import json
 import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime
@@ -14,7 +12,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
 from langchain_core.prompts import PromptTemplate
 from langsmith import traceable
-import json
 
 from agents.core.schema_agent import SchemaAwarenessAgent
 from agents.core.prompt_manager import PromptManager
