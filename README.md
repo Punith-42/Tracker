@@ -1,15 +1,15 @@
 # Web Activity Agent System
 
-An intelligent multi-agent system that converts natural language questions into SQL queries and provides insightful responses about web activity and GitHub data. Built with Google Gemini 2.5 Pro, MySQL, Flask/FastAPI, and Streamlit.
+An intelligent multi-agent system that converts natural language questions into SQL queries and provides insightful responses about web activity and GitHub data. Built with Google Gemini 2.5 Pro, MySQL, FastAPI, and Streamlit.
 
-**📚 For comprehensive documentation, see [DOCUMENTATION.md](DOCUMENTATION.md)**
+**📚 For comprehensive documentation, see [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md)**
 
 ## Features
 
 - **Multi-Agent Architecture**: Specialized agents for schema awareness, SQL generation, query execution, and response formatting
 - **Google Gemini 2.5 Pro**: Powered by Google's advanced language model
 - **MySQL Database**: Robust data storage with proper indexing
-- **Flask + FastAPI**: Dual backend with REST API and Swagger UI
+- **FastAPI**: Modern backend with REST API and Swagger UI
 - **Streamlit Frontend**: Interactive chatbot interface with dark mode
 - **Security Guards**: Multi-layer security for query validation and response sanitization
 - **Database Schema Awareness**: Dynamic schema discovery and context injection
@@ -34,7 +34,7 @@ User Question → SchemaAwarenessAgent → SQLGenerationAgent → QueryExecution
 - **ResponseFormattingAgent**: Converts results to natural language
 - **Security Guards**: Query validation and response sanitization
 - **Database Manager**: Safe database operations with connection pooling
-- **API Endpoints**: REST API (Flask/FastAPI) for agent interaction
+- **API Endpoints**: REST API (FastAPI) for agent interaction
 - **Streamlit UI**: Interactive chatbot with visualizations
 
 ## Quick Start
@@ -78,19 +78,18 @@ User Question → SchemaAwarenessAgent → SQLGenerationAgent → QueryExecution
 
 6. **Start the backend server**
    ```bash
-   python main.py  # Flask on port 5001
-   # OR
-   python start_fastapi.py  # FastAPI on port 8000 with Swagger UI
+   python main.py  # FastAPI on port 8000 with Swagger UI
+   # Or: python scripts/start_fastapi.py
    ```
 
 7. **Start the frontend (in a new terminal)**
    ```bash
    python streamlit_app.py  # Streamlit on port 8501
    # Or: streamlit run streamlit_app.py
+   # Or: python scripts/start_streamlit.py
    ```
 
 **Access Points**:
-- Flask API: `http://localhost:5001`
 - FastAPI + Swagger: `http://localhost:8000/docs`
 - Streamlit UI: `http://localhost:8501`
 
@@ -119,7 +118,7 @@ LANGCHAIN_API_KEY=your_langsmith_api_key
 LANGCHAIN_PROJECT=web-activity-agent
 
 # Application Configuration
-API_PORT=5001
+API_PORT=8000
 DEBUG=true
 ```
 
@@ -151,7 +150,7 @@ DEBUG=true
 
 ```bash
 # Ask a question about web activity
-curl -X POST http://127.0.0.1:5000/api/agent/ask \
+curl -X POST http://127.0.0.1:8000/api/agent/ask \
   -H "Content-Type: application/json" \
   -d '{
     "question": "Show my web activity for today",
@@ -159,7 +158,7 @@ curl -X POST http://127.0.0.1:5000/api/agent/ask \
   }'
 
 # Ask about GitHub activity
-curl -X POST http://127.0.0.1:5000/api/agent/ask \
+curl -X POST http://127.0.0.1:8000/api/agent/ask \
   -H "Content-Type: application/json" \
   -d '{
     "question": "How much time did I spend on social media this week?",
@@ -167,7 +166,7 @@ curl -X POST http://127.0.0.1:5000/api/agent/ask \
   }'
 
 # Ask about repository activity
-curl -X POST http://127.0.0.1:5000/api/agent/ask \
+curl -X POST http://127.0.0.1:8000/api/agent/ask \
   -H "Content-Type: application/json" \
   -d '{
     "question": "What are my most active GitHub repositories?",
@@ -179,7 +178,7 @@ curl -X POST http://127.0.0.1:5000/api/agent/ask \
 
 ```bash
 # Store web activity
-curl -X POST http://127.0.0.1:5000/api/store_web_activity \
+curl -X POST http://127.0.0.1:8000/api/store_web_activity \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": 1,
@@ -189,35 +188,41 @@ curl -X POST http://127.0.0.1:5000/api/store_web_activity \
   }'
 
 # Get daily activity
-curl "http://127.0.0.1:5000/api/get_activity?user_id=1&date=2024-10-25"
+curl "http://127.0.0.1:8000/api/get_activity?user_id=1&date=2024-10-25"
 ```
 
 ## Project Structure
 
 ```
-Group---K/
-├── main.py                    # Main application entry point
-├── app.py                     # Original Flask application
-├── config.py                  # Configuration management
-├── setup_database.py          # Database setup script
-├── requirements.txt           # Python dependencies
-├── env.example               # Environment template
-├── README.md                 # This file
-├── agents/                   # LLM Agent System
-│   ├── core/                # Core agent components
-│   │   ├── prompt_manager.py # Jinja2 template management
-│   │   └── llm_agent.py     # Main LLM agent
-│   ├── guards/              # Security components
-│   │   └── security_guards.py # Query and response validation
-│   └── prompts/             # Jinja2 templates
-│       ├── sql_generation.j2    # SQL generation prompts
-│       ├── response_formatting.j2 # Response formatting prompts
-│       └── query_validation.j2   # Query validation prompts
-└── backend/                 # Backend components
-    ├── database/            # Database management
-    │   └── db_manager.py    # Database operations
-    └── api/                 # API endpoints
-        └── agent_endpoints.py # Agent API endpoints
+.
+├── main.py                        # FastAPI entry point
+├── streamlit_app.py               # Streamlit UI
+├── config.py                      # Configuration management
+├── env.example                    # Environment template
+├── requirements.txt               # Python dependencies
+├── setup_database.py              # Database setup script
+├── README.md                      # This file
+├── docs/                          # Documentation
+│   ├── DOCUMENTATION.md
+│   └── ARCHITECTURE_DIAGRAM.md
+├── scripts/                       # Startup helpers
+│   ├── start_fastapi.py
+│   └── start_streamlit.py
+├── tests/                         # Test scripts
+│   └── test_union_queries.py
+├── agents/                        # LLM Agent System
+│   ├── core/                      # Core agent components
+│   │   ├── prompt_manager.py
+│   │   └── llm_agent.py
+│   ├── guards/                    # Security components
+│   │   └── security_guards.py
+│   └── prompts/                   # Jinja2 templates
+│       ├── sql_generation.j2
+│       ├── response_formatting.j2
+│       └── query_validation.j2
+└── backend/                       # Backend components
+    └── database/
+        └── db_manager.py
 ```
 
 ## Security Features
@@ -282,22 +287,19 @@ The API returns appropriate HTTP status codes:
 ```bash
 # Start the full system
 python main.py
-
-# Start only the basic API (without agent)
-python app.py
 ```
 
 ### Testing the Agent
 
 ```bash
 # Test agent health
-curl http://127.0.0.1:5000/api/agent/health
+curl http://127.0.0.1:8000/api/agent/health
 
 # Get agent information
-curl http://127.0.0.1:5000/api/agent/info
+curl http://127.0.0.1:8000/api/agent/info
 
 # Get query examples
-curl http://127.0.0.1:5000/api/agent/examples
+curl http://127.0.0.1:8000/api/agent/examples
 ```
 
 ## Quick Reference
@@ -323,35 +325,21 @@ python streamlit_app.py
 ### File Structure
 
 ```
-Group---K/
-├── main.py                       # Flask backend (port 5001)
-├── start_fastapi.py              # FastAPI backend (port 8000)
-├── streamlit_app.py              # Streamlit frontend (port 8501)
-├── requirements.txt              # Python dependencies
-├── env.example                   # Environment template
-├── DOCUMENTATION.md              # Comprehensive documentation
+.
+├── main.py
+├── streamlit_app.py
+├── setup_database.py
+├── docs/
+├── scripts/
+├── tests/
 ├── agents/
-│   ├── core/                    # Agent implementations
-│   │   ├── llm_agent.py        # Main orchestrator
-│   │   ├── schema_agent.py    # Schema discovery
-│   │   ├── sql_agent.py        # SQL generation
-│   │   ├── query_execution_agent.py  # Query execution
-│   │   └── response_formatting_agent.py  # Response formatting
-│   ├── guards/                  # Security guards
-│   │   └── security_guards.py  # Query & response validation
-│   └── prompts/                # Jinja2 templates
-├── backend/
-│   ├── api/
-│   │   └── agent_endpoints.py  # API endpoints
-│   └── database/
-│       └── db_manager.py       # Database operations
-└── venv/                        # Virtual environment
+└── backend/
 ```
 
 ## Support
 
 For issues and questions:
-- 📖 See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive guide
+- 📖 See [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) for comprehensive guide
 - 🐛 Create an issue on GitHub
 - 📧 Email: support@example.com
 

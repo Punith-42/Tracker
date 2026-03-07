@@ -11,7 +11,6 @@ from datetime import datetime
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
 from langsmith import traceable
 
 from agents.core.sql_agent import SQLGenerationAgent
@@ -19,7 +18,6 @@ from agents.core.query_execution_agent import QueryExecutionAgent
 from agents.core.response_formatting_agent import ResponseFormattingAgent
 from agents.core.schema_agent import SchemaAwarenessAgent
 from agents.guards.security_guards import QuerySecurityGuard, ResponseSecurityGuard
-from agents.schemas import AgentResponse
 
 logger = logging.getLogger(__name__)
 
@@ -167,28 +165,6 @@ class LLMDatabaseAgent:
         except Exception as e:
             logger.error(f"Error generating SQL query: {e}")
             return None
-    
-    def validate_query_with_llm(self, sql_query: str) -> bool:
-        """Use LLM to validate SQL query (additional security layer)."""
-        try:
-            # Render validation prompt
-            prompt_text = self.prompt_manager.render_query_validation_prompt(sql_query)
-            
-            # Create prompt template
-            prompt = PromptTemplate(
-                template=prompt_text,
-                input_variables=[]
-            )
-            
-            # Get validation response
-            response = (prompt | self.model | self.parser).invoke({})
-            
-            # Check if LLM says query is safe
-            return "SAFE" in response.upper()
-            
-        except Exception as e:
-            logger.error(f"Error in LLM query validation: {e}")
-            return False
     
     def get_agent_info(self) -> Dict[str, Any]:
         """Get information about the agent and all specialized agents."""
