@@ -11,7 +11,7 @@ The **Web Activity Agent System** is an intelligent multi-agent system that conv
 - **Schema Awareness**: Dynamic database understanding
 - **Secure**: Read-only database with multiple security layers
 - **Visual**: Automatic chart generation for data insights
-- **Intelligent**: Powered by Google Gemini 2.5 Pro
+- **Intelligent**: Powered by OpenAI models
 
 ---
 
@@ -104,7 +104,7 @@ sql = "SELECT website_name, SUM(time_spent) as total
        GROUP BY website_name"
 ```
 
-**Tools**: Google Gemini 2.5 Pro LLM
+**Tools**: OpenAI LLM
 
 **Output**: Parameterized SQL query (JSON format)
 
@@ -166,7 +166,7 @@ response = llm.generate(prompt)
 # Output: "You spent 120 minutes on YouTube today."
 ```
 
-**Tools**: Google Gemini 2.5 Pro LLM + ResponseSecurityGuard
+**Tools**: OpenAI LLM + ResponseSecurityGuard
 
 **Output**: 
 ```json
@@ -433,7 +433,7 @@ main.py                             # FastAPI backend
 
 ## 🚀 Key Technologies
 
-- **Google Gemini 2.5 Pro**: LLM for SQL generation and response formatting
+- **OpenAI**: LLM for SQL generation and response formatting
 - **MySQL**: Database storage
 - **LangChain**: LLM integration framework
 - **Pydantic**: Schema validation
