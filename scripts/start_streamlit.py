@@ -35,7 +35,7 @@ def start_streamlit():
         print("⏳ Waiting for the backend to start...")
         
         # Wait for server to start
-        max_attempts = 30
+        max_attempts = 3
         for attempt in range(max_attempts):
             if check_backend_server():
                 print("✅ Backend is now running!")
