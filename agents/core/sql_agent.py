@@ -8,9 +8,8 @@ import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
-from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import PydanticOutputParser
 from langsmith import traceable
 
 from agents.core.schema_agent import SchemaAwarenessAgent
@@ -22,14 +21,14 @@ logger = logging.getLogger(__name__)
 class SQLGenerationAgent:
     """Specialized agent for SQL query generation from natural language."""
     
-    def __init__(self, gemini_api_key: str, model_name: str = "models/gemini-2.5-pro"):
+    def __init__(self, openai_api_key: str, model_name: str = "gpt-4o-mini"):
         """Initialize the SQL generation agent.
         
         Args:
-            gemini_api_key: Google Gemini API key
-            model_name: Gemini model name
+            openai_api_key: OpenAI API key
+            model_name: OpenAI model name
         """
-        self.gemini_api_key = gemini_api_key
+        self.openai_api_key = openai_api_key
         self.model_name = model_name
         
         # Initialize components
@@ -42,16 +41,15 @@ class SQLGenerationAgent:
         logger.info(f"SQLGenerationAgent initialized with model: {model_name}")
     
     def _setup_llm(self):
-        """Setup the Google Gemini LLM for SQL generation."""
+        """Setup the OpenAI LLM for SQL generation."""
         try:
-            if not self.gemini_api_key:
-                raise ValueError("Gemini API key is required")
+            if not self.openai_api_key:
+                raise ValueError("OpenAI API key is required")
             
-            self.model = ChatGoogleGenerativeAI(
+            self.model = ChatOpenAI(
                 model=self.model_name,
-                google_api_key=self.gemini_api_key,
-                temperature=0.0,  # Zero temperature for consistent SQL generation
-                convert_system_message_to_human=True
+                api_key=self.openai_api_key,
+                temperature=0.0  # Zero temperature for consistent SQL generation
             )
             self.parser = PydanticOutputParser(pydantic_object=SQLQueryResponse)
             
@@ -84,13 +82,13 @@ class SQLGenerationAgent:
             # Create comprehensive prompt for SQL generation
             prompt_text = self._create_sql_prompt(question, user_id, current_date, schema_info)
             
-            # Generate SQL query using Gemini
+            # Generate SQL query using OpenAI
             response = self.model.invoke(prompt_text)
             
-            # Parse response (Gemini returns text, not JSON)
+            # Parse response (LLM returns text, not JSON)
             try:
                 response_text = response.content.strip()
-                logger.info(f"Raw Gemini response: {response_text}")
+                logger.info(f"Raw LLM response: {response_text}")
                 
                 # Try to extract SQL query from the response
                 sql_query = self._extract_sql_from_response(response_text)
@@ -209,7 +207,7 @@ You must respond with a valid JSON object containing:
 Generate the SQL query:"""
     
     def _extract_sql_from_response(self, response_text: str) -> Optional[str]:
-        """Extract SQL query from Gemini's text response."""
+        """Extract SQL query from the model text response."""
         if not response_text:
             return None
         
@@ -244,7 +242,7 @@ Generate the SQL query:"""
         return None
     
     def _create_sql_prompt(self, question: str, user_id: int, current_date: str, schema_info: str) -> str:
-        """Create a direct SQL generation prompt for Gemini."""
+        """Create a direct SQL generation prompt for the model."""
         return f"""You are an expert SQL developer. Generate a SQL query for the following question.
 
 DATABASE SCHEMA:

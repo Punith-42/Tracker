@@ -1,13 +1,13 @@
 # Web Activity Agent System
 
-An intelligent multi-agent system that converts natural language questions into SQL queries and provides insightful responses about web activity and GitHub data. Built with Google Gemini 2.5 Pro, MySQL, FastAPI, and Streamlit.
+An intelligent multi-agent system that converts natural language questions into SQL queries and provides insightful responses about web activity and GitHub data. Built with OpenAI, MySQL, FastAPI, and Streamlit.
 
 **📚 For comprehensive documentation, see [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md)**
 
 ## Features
 
 - **Multi-Agent Architecture**: Specialized agents for schema awareness, SQL generation, query execution, and response formatting
-- **Google Gemini 2.5 Pro**: Powered by Google's advanced language model
+- **OpenAI Models**: Powered by OpenAI chat models
 - **MySQL Database**: Robust data storage with proper indexing
 - **FastAPI**: Modern backend with REST API and Swagger UI
 - **Streamlit Frontend**: Interactive chatbot interface with dark mode
@@ -29,7 +29,7 @@ User Question → SchemaAwarenessAgent → SQLGenerationAgent → QueryExecution
 
 - **LLMDatabaseAgent**: Main orchestrator managing agent flow
 - **SchemaAwarenessAgent**: Discovers database structure and sample data
-- **SQLGenerationAgent**: Converts natural language to SQL using Gemini
+- **SQLGenerationAgent**: Converts natural language to SQL using OpenAI
 - **QueryExecutionAgent**: Safely executes SQL queries on MySQL
 - **ResponseFormattingAgent**: Converts results to natural language
 - **Security Guards**: Query validation and response sanitization
@@ -43,7 +43,7 @@ User Question → SchemaAwarenessAgent → SQLGenerationAgent → QueryExecution
 
 - Python 3.13+
 - MySQL 8.0+
-- Google Gemini API key
+- OpenAI API key
 - pip (Python package manager)
 
 ### Installation
@@ -107,9 +107,9 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=web_activity_db
 
-# Google Gemini API
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=models/gemini-2.5-pro
+# OpenAI API
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
 
 # LangSmith Configuration (Optional)
 LANGCHAIN_TRACING_V2=true

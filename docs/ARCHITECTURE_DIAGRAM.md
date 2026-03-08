@@ -7,14 +7,14 @@ graph TB
     %% Specialized Agents - Code Execution Flow
     subgraph Agents["Specialized Agents - Code Execution Flow"]
         SCHEMA_AGENT["SchemaAwarenessAgent<br/>get_database_schema()<br/>Tool: MySQL Database"]
-        SQL_AGENT["SQLGenerationAgent<br/>generate_sql_query()<br/>Tools: Gemini LLM + Schema Info"]
+        SQL_AGENT["SQLGenerationAgent<br/>generate_sql_query()<br/>Tools: OpenAI LLM + Schema Info"]
         QUERY_AGENT["QueryExecutionAgent<br/>execute_query()<br/>Tool: MySQL Database"]
-        RESPONSE_AGENT["ResponseFormattingAgent<br/>format_response()<br/>Tool: Gemini LLM"]
+        RESPONSE_AGENT["ResponseFormattingAgent<br/>format_response()<br/>Tool: OpenAI LLM"]
     end
     
     %% External Tools Integration
     subgraph Tools["External Tools"]
-        GEMINI["Google Gemini 2.5 Pro<br/>ChatGoogleGenerativeAI"]
+        OPENAI["OpenAI Chat Model<br/>ChatOpenAI"]
         MYSQL["MySQL Database<br/>PyMySQL Driver"]
         LANGSMITH["LangSmith Tracing<br/>@traceable decorators"]
     end
@@ -33,9 +33,9 @@ graph TB
 
     %% Tools Integration - Flow to External Tools
     SCHEMA_AGENT --> MYSQL
-    SQL_AGENT --> GEMINI
+    SQL_AGENT --> OPENAI
     QUERY_AGENT --> MYSQL
-    RESPONSE_AGENT --> GEMINI
+    RESPONSE_AGENT --> OPENAI
     LLM_AGENT --> LANGSMITH
 
     %% Security Guards Validation Flow
@@ -51,5 +51,5 @@ graph TB
     
     class LLM_AGENT orchestrator
     class SCHEMA_AGENT,SQL_AGENT,QUERY_AGENT,RESPONSE_AGENT agents
-    class GEMINI,MYSQL,LANGSMITH tools
+    class OPENAI,MYSQL,LANGSMITH tools
     class QUERY_GUARD,RESPONSE_GUARD security

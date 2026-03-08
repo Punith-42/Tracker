@@ -8,9 +8,8 @@ import logging
 from typing import Dict, Any, Optional, List, Tuple
 from datetime import datetime
 
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
-from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import PydanticOutputParser
 from langsmith import traceable
 
 from agents.core.prompt_manager import PromptManager
@@ -22,14 +21,14 @@ logger = logging.getLogger(__name__)
 class ResponseFormattingAgent:
     """Specialized agent for formatting query results into natural language responses."""
     
-    def __init__(self, gemini_api_key: str, model_name: str = "models/gemini-2.5-pro"):
+    def __init__(self, openai_api_key: str, model_name: str = "gpt-4o-mini"):
         """Initialize the response formatting agent.
         
         Args:
-            gemini_api_key: Google Gemini API key
-            model_name: Gemini model name
+            openai_api_key: OpenAI API key
+            model_name: OpenAI model name
         """
-        self.gemini_api_key = gemini_api_key
+        self.openai_api_key = openai_api_key
         self.model_name = model_name
         
         # Initialize components
@@ -42,16 +41,15 @@ class ResponseFormattingAgent:
         logger.info(f"ResponseFormattingAgent initialized with model: {model_name}")
     
     def _setup_llm(self):
-        """Setup the Google Gemini LLM for response formatting."""
+        """Setup the OpenAI LLM for response formatting."""
         try:
-            if not self.gemini_api_key:
-                raise ValueError("Gemini API key is required")
+            if not self.openai_api_key:
+                raise ValueError("OpenAI API key is required")
             
-            self.model = ChatGoogleGenerativeAI(
+            self.model = ChatOpenAI(
                 model=self.model_name,
-                google_api_key=self.gemini_api_key,
-                temperature=0.3,  # Slightly higher temperature for more natural responses
-                convert_system_message_to_human=True
+                api_key=self.openai_api_key,
+                temperature=0.3  # Slightly higher temperature for more natural responses
             )
             self.parser = PydanticOutputParser(pydantic_object=DataAnalysisResponse)
             
@@ -85,22 +83,22 @@ class ResponseFormattingAgent:
             # Create comprehensive prompt for response formatting
             prompt_text = self._create_response_prompt(question, results_data, sql_query)
             
-            # Generate formatted response using Gemini
+            # Generate formatted response using OpenAI
             try:
                 response = self.model.invoke(prompt_text)
                 
-                # Parse Gemini text response
+                # Parse model text response
                 try:
                     response_text = response.content.strip()
-                    logger.info(f"Raw Gemini response: {response_text[:200]}...")
+                    logger.info(f"Raw LLM response: {response_text[:200]}...")
                     
                     # Extract structured response from text
-                    formatted_response, structured_results, summary, metadata = self._parse_gemini_response(response_text, results_data)
+                    formatted_response, structured_results, summary, metadata = self._parse_llm_response(response_text, results_data)
                     
                     logger.info(f"LLM response generated successfully: {formatted_response[:100]}...")
                     
                 except Exception as e:
-                    logger.error(f"Failed to parse Gemini response: {e}")
+                    logger.error(f"Failed to parse model response: {e}")
                     # Fallback to simple response
                     formatted_response = self._create_fallback_aggregation_response(question, results_data)
                     structured_results = results_data.get("data", [])
@@ -509,8 +507,8 @@ Provide a natural, helpful response:"""
             logger.error(f"Error creating fallback response: {e}")
             return "I found some data but couldn't format a proper response."
     
-    def _parse_gemini_response(self, response_text: str, results_data: Dict[str, Any]) -> Tuple[str, List[Dict], Dict, Dict]:
-        """Parse Gemini's text response into structured format."""
+    def _parse_llm_response(self, response_text: str, results_data: Dict[str, Any]) -> Tuple[str, List[Dict], Dict, Dict]:
+        """Parse model text response into structured format."""
         try:
             # For now, use the entire response as the formatted response
             formatted_response = response_text.strip()
@@ -534,12 +532,12 @@ Provide a natural, helpful response:"""
             return formatted_response, structured_results, summary, metadata
             
         except Exception as e:
-            logger.error(f"Error parsing Gemini response: {e}")
+            logger.error(f"Error parsing model response: {e}")
             # Fallback
             return response_text, results_data.get("data", []), {}, {}
     
     def _create_response_prompt(self, question: str, results_data: Dict[str, Any], sql_query: str = None) -> str:
-        """Create a direct response formatting prompt for Gemini."""
+        """Create a direct response formatting prompt for the model."""
         return f"""You are a helpful data analyst assistant. Format the database query results into a clear, natural language response.
 
 ORIGINAL USER QUESTION: {question}
